@@ -1,6 +1,6 @@
 document.write(`
 <div class="announcement"><span>Exclusive online offers • Free delivery on selected orders</span><div><a href="about.html">For Business ↗</a>
-<a href="contact.html">Support</a>
+<a href="contact.html">Support</a><a href="orders.html">Track Order</a>
 <a href="admin-login.html">Admin</a></div></div>
 <header class="header">
   <div class="nav">

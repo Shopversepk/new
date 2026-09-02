@@ -37,6 +37,9 @@
   document.head.appendChild(style);
 
   function makeIntro() {
+    // Show the opening logo only once during the current browser session.
+    if (sessionStorage.getItem("sv_intro_seen") === "1") return;
+    sessionStorage.setItem("sv_intro_seen", "1");
     const intro = document.createElement("div");
     intro.className = "sv-intro";
     const brand = "ShopVerse";

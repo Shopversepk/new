@@ -19,7 +19,10 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
-  serverTimestamp
+  serverTimestamp,
+  query,
+  orderBy,
+  where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -1156,4 +1159,104 @@ function escapeHtml(text) {
 
   return div.innerHTML;
 
+}
+
+
+/* ==========================================
+   ORDERS MANAGEMENT
+========================================== */
+let allOrders = [];
+const ORDER_STATUSES = ["Order Placed","Packing","On The Way","Arrived","Delivered","Cancelled"];
+
+function money(value){
+  return "$" + Number(value || 0).toFixed(2);
+}
+
+function orderDate(value){
+  if (!value) return "Just now";
+  try { return value.toDate ? value.toDate().toLocaleString() : new Date(value).toLocaleString(); }
+  catch (_) { return "—"; }
+}
+
+function statusClass(status){
+  return "status-" + String(status || "").toLowerCase().replace(/\s+/g,"-");
+}
+
+function renderOrders(){
+  const box = document.getElementById("adminOrders");
+  if(!box) return;
+  const filter = document.getElementById("orderStatusFilter");
+  const wanted = filter ? filter.value : "";
+  const list = wanted ? allOrders.filter(o => o.status === wanted) : allOrders;
+  if(!list.length){
+    box.innerHTML = '<div class="empty-order">No orders found yet.</div>';
+    return;
+  }
+  box.innerHTML = list.map(order => {
+    const c = order.customer || {};
+    const items = Array.isArray(order.items) ? order.items : [];
+    return `<article class="order-card">
+      <div class="order-top">
+        <div><span class="order-id">#${order.id.slice(0,8).toUpperCase()}</span><h3>${c.name || "Customer"}</h3><small>${orderDate(order.createdAt)}</small></div>
+        <span class="order-status ${statusClass(order.status)}">${order.status || "Order Placed"}</span>
+      </div>
+      <div class="order-details">
+        <div><b>📞 Phone</b><span>${c.phone || "—"}</span></div>
+        <div><b>✉️ Email</b><span>${c.email || "—"}</span></div>
+        <div><b>📍 Delivery</b><span>${[c.address,c.city,c.postalCode].filter(Boolean).join(", ") || "—"}</span></div>
+      </div>
+      <div class="order-items">${items.map(i=>`<div class="order-item">${i.image?`<img src="${i.image}" alt="">`:""}<span>${i.name || "Product"} × ${i.qty || 1}</span><b>${money((i.price||0)*(i.qty||1))}</b></div>`).join("")}</div>
+      ${order.notes?`<div class="order-note"><b>Note:</b> ${order.notes}</div>`:""}
+      <div class="order-actions"><b>Total: ${money(order.total)}</b>
+        <div><select class="order-status-select" data-id="${order.id}">${ORDER_STATUSES.map(s=>`<option ${s===(order.status||"Order Placed")?"selected":""}>${s}</option>`).join("")}</select>
+        <button class="admin-primary-btn update-order" data-id="${order.id}">Update Status</button></div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function updateOrderStats(){
+  const set=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v};
+  set("totalOrders", allOrders.length);
+  set("activeOrders", allOrders.filter(o=>!["Delivered","Cancelled"].includes(o.status)).length);
+  set("orderRevenue", money(allOrders.filter(o=>o.status!=="Cancelled").reduce((s,o)=>s+Number(o.total||0),0)));
+}
+
+function loadOrders(){
+  const box=document.getElementById("adminOrders");
+  if(!box) return;
+  const q=query(collection(db,"orders"),orderBy("createdAt","desc"));
+  onSnapshot(q,snap=>{
+    allOrders=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderOrders(); updateOrderStats();
+  },err=>{
+    console.error(err);
+    box.innerHTML='<div class="empty-order">Orders could not be loaded. Check Firestore rules and index settings.</div>';
+  });
+}
+
+document.addEventListener("change", e=>{
+  if(e.target && e.target.id==="orderStatusFilter") renderOrders();
+});
+
+document.addEventListener("click", async e=>{
+  const btn=e.target.closest(".update-order");
+  if(!btn) return;
+  const id=btn.dataset.id;
+  const card=btn.closest(".order-card");
+  const status=card.querySelector(".order-status-select").value;
+  btn.disabled=true; btn.textContent="Saving...";
+  try{
+    await updateDoc(doc(db,"orders",id),{status,updatedAt:serverTimestamp()});
+    btn.textContent="Updated ✓";
+    setTimeout(()=>{btn.disabled=false;btn.textContent="Update Status"},900);
+  }catch(err){
+    console.error(err); btn.disabled=false;btn.textContent="Try Again";
+    alert("Could not update order. Check Firestore rules.");
+  }
+});
+
+if(document.querySelector(".admin-body")){
+  // The auth callback above loads products; load orders after page/auth has initialized.
+  loadOrders();
 }

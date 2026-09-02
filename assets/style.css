@@ -857,3 +857,5 @@ footer{
   }
 
 }
+
+.tracking{display:flex;gap:10px;margin-top:25px;flex-wrap:wrap}.track-step{flex:1;min-width:110px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;color:#aaa}.track-step span{width:38px;height:38px;border-radius:50%;background:#eee;display:grid;place-items:center;font-weight:800}.track-step.done,.track-step.current{color:#111}.track-step.done span,.track-step.current span{background:#111;color:#fff}.track-step.current b{color:#111}@media(max-width:600px){.tracking{flex-direction:column}.track-step{flex-direction:row;justify-content:flex-start;text-align:left}}
