@@ -1,1475 +1,1010 @@
-/* =========================================================
-   SHOPVERSE PREMIUM ANIMATION SYSTEM
-   Professional Cart + Wishlist + Cursor + UI Animations
-========================================================= */
+/* ShopVerse Motion System - safe enhancement layer */
+(function(){
+'use strict';
 
-(function () {
+const css=`
+:root{
+  --sv-accent:#6d5dfc;
+  --sv-glow:rgba(109,93,252,.22)
+}
 
-  "use strict";
+html{
+  scroll-behavior:smooth
+}
 
+body{
+  overflow-x:hidden
+}
 
-  /* =========================================================
-     ADD PREMIUM ANIMATION CSS AUTOMATICALLY
-  ========================================================= */
+/* PAGE ENTRANCE */
 
-  const style = document.createElement("style");
+body.sv-ready{
+  animation:svPage .7s cubic-bezier(.16,1,.3,1)
+}
 
-  style.textContent = `
+@keyframes svPage{
+  from{
+    opacity:0;
+    transform:translateY(10px)
+  }
+  to{
+    opacity:1;
+    transform:none
+  }
+}
 
-  /* =====================================================
-     GLOBAL SMOOTHNESS
-  ===================================================== */
+/* SCROLL REVEAL */
 
-  html{
-    scroll-behavior:smooth;
+.sv-reveal{
+  opacity:0;
+  transform:translateY(34px) scale(.985);
+  transition:
+    opacity .75s ease,
+    transform .75s cubic-bezier(.16,1,.3,1)
+}
+
+.sv-reveal.sv-in{
+  opacity:1;
+  transform:none
+}
+
+/* PRODUCT CARDS */
+
+.product,
+.card,
+.feature,
+.cat{
+  will-change:transform;
+  transition:
+    transform .35s cubic-bezier(.16,1,.3,1),
+    box-shadow .35s ease,
+    filter .35s ease
+}
+
+.product:hover,
+.card:hover,
+.feature:hover,
+.cat:hover{
+  transform:translateY(-9px);
+  box-shadow:0 24px 55px rgba(10,15,30,.14)
+}
+
+.product{
+  overflow:hidden
+}
+
+.product img{
+  transition:
+    transform .7s cubic-bezier(.16,1,.3,1),
+    filter .5s ease
+}
+
+.product:hover img{
+  transform:scale(1.08);
+  filter:saturate(1.08)
+}
+
+/* IMAGE SHINE */
+
+.product::after{
+  content:'';
+  position:absolute;
+  inset:-60%;
+  background:linear-gradient(
+    110deg,
+    transparent 42%,
+    rgba(255,255,255,.32) 50%,
+    transparent 58%
+  );
+  transform:translateX(-70%) rotate(8deg);
+  transition:transform .9s ease;
+  pointer-events:none
+}
+
+.product:hover::after{
+  transform:translateX(70%) rotate(8deg)
+}
+
+/* BUTTONS */
+
+button,
+a.btn,
+.btn,
+.add{
+  position:relative;
+  isolation:isolate;
+  transition:
+    transform .25s cubic-bezier(.16,1,.3,1),
+    box-shadow .25s ease,
+    filter .25s ease
+}
+
+.sv-press{
+  animation:svPress .48s cubic-bezier(.16,1,.3,1)
+}
+
+@keyframes svPress{
+  0%{
+    transform:scale(1)
   }
 
-  body{
-    overflow-x:hidden;
+  40%{
+    transform:scale(.94)
   }
 
-  button,
-  a,
-  input,
-  select{
-    -webkit-tap-highlight-color:transparent;
+  75%{
+    transform:scale(1.06)
   }
 
+  100%{
+    transform:scale(1)
+  }
+}
 
-  /* =====================================================
-     CUSTOM CURSOR
-  ===================================================== */
+/* RIPPLE */
 
-  @media (pointer:fine){
+.sv-ripple{
+  position:absolute;
+  border-radius:999px;
+  background:rgba(255,255,255,.42);
+  pointer-events:none;
+  transform:scale(0);
+  animation:svRipple .65s linear;
+  z-index:-1
+}
 
-    body{
-      cursor:none;
-    }
+@keyframes svRipple{
+  to{
+    transform:scale(4);
+    opacity:0
+  }
+}
 
-    a,
-    button,
-    input,
-    select,
-    .product{
-      cursor:none;
-    }
+/* HEART */
 
-    .sv-cursor{
-      position:fixed;
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background:#1464f4;
-      pointer-events:none;
-      z-index:999999;
-      left:0;
-      top:0;
-      transform:translate(-50%,-50%);
-      transition:
-        width .22s ease,
-        height .22s ease,
-        background .22s ease,
-        border .22s ease;
-      mix-blend-mode:multiply;
-    }
+.sv-heart-pop{
+  animation:svHeart .62s cubic-bezier(.16,1,.3,1)
+}
 
-    .sv-cursor-ring{
-      position:fixed;
-      width:34px;
-      height:34px;
-      border:1.5px solid rgba(20,100,244,.65);
-      border-radius:50%;
-      pointer-events:none;
-      z-index:999998;
-      left:0;
-      top:0;
-      transform:translate(-50%,-50%);
-      transition:
-        width .25s ease,
-        height .25s ease,
-        border-color .25s ease;
-    }
-
-    .sv-cursor.active{
-      width:18px;
-      height:18px;
-      background:#111;
-    }
-
-    .sv-cursor-ring.active{
-      width:52px;
-      height:52px;
-      border-color:#111;
-    }
-
+@keyframes svHeart{
+  0%{
+    transform:scale(1)
   }
 
-
-  /* =====================================================
-     PRODUCT CARD PREMIUM HOVER
-  ===================================================== */
-
-  .product{
-    transition:
-      transform .45s cubic-bezier(.16,1,.3,1),
-      box-shadow .45s cubic-bezier(.16,1,.3,1);
-    will-change:transform;
+  30%{
+    transform:scale(1.5) rotate(-10deg)
   }
 
-  @media (hover:hover){
-
-    .product:hover{
-      transform:
-        translateY(-10px)
-        scale(1.01);
-      box-shadow:
-        0 30px 70px rgba(10,20,40,.14);
-    }
-
+  58%{
+    transform:scale(.88) rotate(7deg)
   }
 
+  100%{
+    transform:scale(1)
+  }
+}
 
-  .product img{
-    transition:
-      transform .7s cubic-bezier(.16,1,.3,1),
-      filter .5s ease;
-    will-change:transform;
+/* HEART PARTICLES */
+
+.sv-particle{
+  position:fixed;
+  z-index:2147483647;
+  pointer-events:none;
+  font-size:15px;
+  animation:svParticle .8s ease-out forwards
+}
+
+@keyframes svParticle{
+  to{
+    opacity:0;
+    transform:
+      translate(var(--x),var(--y))
+      scale(1.35)
+      rotate(25deg)
+  }
+}
+
+/* FLY TO CART */
+
+.sv-fly{
+  position:fixed;
+  width:70px;
+  height:70px;
+  object-fit:cover;
+  border-radius:16px;
+  z-index:2147483646;
+  pointer-events:none;
+  box-shadow:0 22px 50px rgba(0,0,0,.3)
+}
+
+.sv-cart-bump{
+  animation:svCart .65s cubic-bezier(.16,1,.3,1)
+}
+
+@keyframes svCart{
+  0%{
+    transform:scale(1)
   }
 
-  .product:hover img{
-    transform:scale(1.07);
-    filter:brightness(1.04);
+  35%{
+    transform:scale(1.3) rotate(-9deg)
   }
 
-
-  /* =====================================================
-     WISHLIST HEART
-  ===================================================== */
-
-  .wish{
-    transition:
-      transform .25s cubic-bezier(.16,1,.3,1),
-      background .25s ease,
-      color .25s ease,
-      box-shadow .25s ease;
-    position:relative;
-    overflow:visible;
+  70%{
+    transform:scale(.93) rotate(5deg)
   }
 
-  @media (hover:hover){
-
-    .wish:hover{
-      transform:scale(1.12);
-    }
-
+  100%{
+    transform:none
   }
+}
 
+/* PREMIUM CURSOR */
 
-  .wish.sv-heart-pop{
-    animation:svHeartPop .55s cubic-bezier(.16,1,.3,1);
-  }
+@media(pointer:fine){
 
-
-  @keyframes svHeartPop{
-
-    0%{
-      transform:scale(1);
-    }
-
-    35%{
-      transform:scale(1.45);
-    }
-
-    60%{
-      transform:scale(.9);
-    }
-
-    100%{
-      transform:scale(1);
-    }
-
-  }
-
-
-  /* HEART PARTICLES */
-
-  .sv-heart-particle{
+  .sv-dot,
+  .sv-ring{
     position:fixed;
-    pointer-events:none;
-    z-index:99999;
-    font-size:13px;
-    animation:svHeartParticle .8s ease-out forwards;
-  }
-
-
-  @keyframes svHeartParticle{
-
-    0%{
-      opacity:1;
-      transform:
-        translate(0,0)
-        scale(.6);
-    }
-
-    100%{
-      opacity:0;
-      transform:
-        translate(var(--x),var(--y))
-        scale(1.2)
-        rotate(20deg);
-    }
-
-  }
-
-
-  /* =====================================================
-     ADD TO CART BUTTON
-  ===================================================== */
-
-  .add,
-  .btn.dark{
-    position:relative;
-    overflow:hidden;
-    transition:
-      transform .28s cubic-bezier(.16,1,.3,1),
-      box-shadow .28s ease,
-      background .28s ease;
-  }
-
-
-  @media (hover:hover){
-
-    .add:hover,
-    .btn.dark:hover{
-      transform:translateY(-3px);
-      box-shadow:
-        0 14px 30px rgba(0,0,0,.22);
-    }
-
-  }
-
-
-  .sv-cart-success{
-    animation:svCartSuccess .7s cubic-bezier(.16,1,.3,1);
-  }
-
-
-  @keyframes svCartSuccess{
-
-    0%{
-      transform:scale(1);
-    }
-
-    25%{
-      transform:scale(.94);
-    }
-
-    55%{
-      transform:scale(1.06);
-    }
-
-    100%{
-      transform:scale(1);
-    }
-
-  }
-
-
-  /* =====================================================
-     RIPPLE
-  ===================================================== */
-
-  .sv-ripple{
-    position:absolute;
+    left:0;
+    top:0;
     border-radius:50%;
-    background:rgba(255,255,255,.38);
-    transform:scale(0);
-    animation:svRipple .65s linear;
     pointer-events:none;
+    z-index:2147483647;
+    transform:translate(-50%,-50%)
   }
 
-
-  @keyframes svRipple{
-
-    to{
-      transform:scale(4);
-      opacity:0;
-    }
-
+  .sv-dot{
+    width:8px;
+    height:8px;
+    background:#111
   }
 
-
-  /* =====================================================
-     FLYING PRODUCT IMAGE
-  ===================================================== */
-
-  .sv-flying-product{
-    position:fixed;
-    width:72px;
-    height:72px;
-    border-radius:16px;
-    object-fit:cover;
-    pointer-events:none;
-    z-index:999999;
-    box-shadow:
-      0 20px 50px rgba(0,0,0,.28);
+  .sv-ring{
+    width:34px;
+    height:34px;
+    border:1px solid rgba(0,0,0,.45);
+    transition:
+      width .2s,
+      height .2s,
+      border-color .2s
   }
 
-
-  /* =====================================================
-     CART ICON BUMP
-  ===================================================== */
-
-  .sv-cart-bump{
-    animation:svCartBump .65s cubic-bezier(.16,1,.3,1);
+  .sv-ring.sv-hover{
+    width:54px;
+    height:54px;
+    border-color:var(--sv-accent)
   }
 
+}
 
-  @keyframes svCartBump{
+/* HERO GLOW */
 
-    0%{
-      transform:scale(1);
-    }
+.sv-orb{
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  filter:blur(8px);
+  background:radial-gradient(
+    circle,
+    var(--sv-glow),
+    transparent 68%
+  );
+  pointer-events:none;
+  z-index:0;
+  animation:svFloat 8s ease-in-out infinite
+}
 
-    35%{
-      transform:scale(1.28) rotate(-8deg);
-    }
+.sv-orb.b{
+  width:180px;
+  height:180px;
+  animation-delay:-3s
+}
 
-    65%{
-      transform:scale(.94) rotate(4deg);
-    }
-
-    100%{
-      transform:scale(1) rotate(0);
-    }
-
-  }
-
-
-  .badge.sv-badge-bump{
-    animation:svBadgeBump .55s cubic-bezier(.16,1,.3,1);
-  }
-
-
-  @keyframes svBadgeBump{
-
-    0%{
-      transform:scale(1);
-    }
-
-    35%{
-      transform:scale(1.55);
-    }
-
-    70%{
-      transform:scale(.85);
-    }
-
-    100%{
-      transform:scale(1);
-    }
-
-  }
-
-
-  /* =====================================================
-     PROFESSIONAL TOAST
-  ===================================================== */
-
-  .toast{
-    display:block !important;
-    opacity:0;
-    pointer-events:none;
+@keyframes svFloat{
+  50%{
     transform:
-      translateY(25px)
-      scale(.96);
-    transition:
-      opacity .35s ease,
-      transform .35s cubic-bezier(.16,1,.3,1);
+      translate(35px,-25px)
+      scale(1.12)
+  }
+}
+
+/* PAGE LOADER */
+
+.sv-loading{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  z-index:2147483647;
+  display:grid;
+  place-items:center;
+  transition:
+    opacity .45s ease,
+    visibility .45s
+}
+
+.sv-loading.hide{
+  opacity:0;
+  visibility:hidden
+}
+
+.sv-loader{
+  width:52px;
+  height:52px;
+  border:4px solid #eee;
+  border-top-color:var(--sv-accent);
+  border-radius:50%;
+  animation:svSpin .8s linear infinite
+}
+
+@keyframes svSpin{
+  to{
+    transform:rotate(360deg)
+  }
+}
+
+/* REDUCED MOTION */
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *:before,
+  *:after{
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important
+  }
+
+}
+`;
+
+const s=document.createElement('style');
+
+s.textContent=css;
+
+document.head.appendChild(s);
+
+
+/* HELPERS */
+
+function qs(sel){
+  return [...document.querySelectorAll(sel)]
+}
+
+
+/* LOADER */
+
+function initLoader(){
+
+  const l=document.createElement('div');
+
+  l.className='sv-loading';
+
+  l.innerHTML='<div class="sv-loader"></div>';
+
+  document.body.appendChild(l);
+
+  addEventListener(
+    'load',
+    ()=>setTimeout(
+      ()=>l.classList.add('hide'),
+      250
+    ),
+    {once:true}
+  );
+
+}
+
+
+/* SCROLL REVEAL */
+
+function initReveal(){
+
+  const els=qs(
+    'section,.section,.section-head,.products,.categories,.feature,.content-card,.page-title,.hero > *,main > *'
+  ).filter(
+    e=>!e.closest('.products') ||
+    e.classList.contains('products')
+  );
+
+
+  if(!('IntersectionObserver' in window)){
+
+    els.forEach(
+      e=>e.classList.add('sv-in')
+    );
+
+    return;
   }
 
 
-  .toast.show{
-    opacity:1;
-    transform:
-      translateY(0)
-      scale(1);
-  }
+  const o=new IntersectionObserver(
 
+    es=>es.forEach(x=>{
 
-  /* =====================================================
-     SCROLL REVEAL
-  ===================================================== */
+      if(x.isIntersecting){
 
-  .sv-reveal{
-    opacity:0;
-    transform:translateY(28px);
-    transition:
-      opacity .75s ease,
-      transform .75s cubic-bezier(.16,1,.3,1);
-  }
+        x.target.classList.add('sv-in');
 
+        o.unobserve(x.target);
 
-  .sv-reveal.sv-visible{
-    opacity:1;
-    transform:translateY(0);
-  }
+      }
 
+    }),
 
-  /* =====================================================
-     HEADER MICRO INTERACTIONS
-  ===================================================== */
-
-  .header-icon{
-    transition:
-      transform .25s cubic-bezier(.16,1,.3,1),
-      background .25s ease;
-  }
-
-
-  @media (hover:hover){
-
-    .header-icon:hover{
-      transform:
-        translateY(-2px)
-        scale(1.06);
+    {
+      threshold:.08,
+      rootMargin:'0px 0px -40px'
     }
 
-  }
+  );
 
 
-  .header-icon:active{
-    transform:scale(.9);
-  }
+  els.forEach(e=>{
+
+    e.classList.add('sv-reveal');
+
+    o.observe(e);
+
+  });
+
+}
 
 
-  /* =====================================================
-     BUTTON CLICK
-  ===================================================== */
+/* RIPPLE */
 
-  button:active{
-    transition-duration:.08s;
-  }
+function ripple(el,e){
 
+  const r=el.getBoundingClientRect();
 
-  /* =====================================================
-     PAGE LOAD
-  ===================================================== */
+  const d=Math.max(
+    r.width,
+    r.height
+  );
 
-  body{
-    animation:svPageEnter .7s cubic-bezier(.16,1,.3,1);
-  }
+  const x=e.clientX-r.left;
 
+  const y=e.clientY-r.top;
 
-  @keyframes svPageEnter{
+  const sp=document.createElement('span');
 
-    from{
-      opacity:0;
-      transform:translateY(8px);
-    }
+  sp.className='sv-ripple';
 
-    to{
-      opacity:1;
-      transform:translateY(0);
-    }
-
-  }
-
-
-  /* =====================================================
-     ACCESSIBILITY
-  ===================================================== */
-
-  @media (prefers-reduced-motion:reduce){
-
-    *,
-    *::before,
-    *::after{
-      animation-duration:.01ms !important;
-      animation-iteration-count:1 !important;
-      transition-duration:.01ms !important;
-      scroll-behavior:auto !important;
-    }
-
-  }
-
+  sp.style.cssText+=`
+    width:${d}px;
+    height:${d}px;
+    left:${x-d/2}px;
+    top:${y-d/2}px
   `;
 
+  el.appendChild(sp);
 
-  document.head.appendChild(style);
+  setTimeout(
+    ()=>sp.remove(),
+    700
+  );
 
-
-
-  /* =========================================================
-     CUSTOM CURSOR
-  ========================================================= */
-
-  function createCursor(){
-
-    if(!window.matchMedia("(pointer:fine)").matches){
-      return;
-    }
+}
 
 
-    const cursor =
-      document.createElement("div");
+/* HEART PARTICLES */
+
+function particles(el){
+
+  const r=el.getBoundingClientRect();
 
 
-    cursor.className =
-      "sv-cursor";
+  for(let i=0;i<7;i++){
+
+    const p=document.createElement('i');
+
+    p.className='sv-particle';
+
+    p.textContent=
+      i%2 ? '✦' : '♥';
 
 
-    const ring =
-      document.createElement("div");
+    const a=Math.PI*2*i/7;
+
+    const d=35+Math.random()*35;
 
 
-    ring.className =
-      "sv-cursor-ring";
+    p.style.left=
+      r.left+r.width/2+'px';
 
 
-    document.body.appendChild(cursor);
-
-    document.body.appendChild(ring);
-
-
-    let mouseX = 0;
-    let mouseY = 0;
-
-    let ringX = 0;
-    let ringY = 0;
+    p.style.top=
+      r.top+r.height/2+'px';
 
 
-    document.addEventListener(
-      "mousemove",
-      event => {
-
-        mouseX = event.clientX;
-
-        mouseY = event.clientY;
-
-
-        cursor.style.left =
-          mouseX + "px";
-
-
-        cursor.style.top =
-          mouseY + "px";
-
-      }
+    p.style.setProperty(
+      '--x',
+      Math.cos(a)*d+'px'
     );
 
 
-    function animateRing(){
-
-      ringX +=
-        (mouseX - ringX) * .18;
-
-
-      ringY +=
-        (mouseY - ringY) * .18;
-
-
-      ring.style.left =
-        ringX + "px";
-
-
-      ring.style.top =
-        ringY + "px";
-
-
-      requestAnimationFrame(
-        animateRing
-      );
-
-    }
-
-
-    animateRing();
-
-
-    document.addEventListener(
-      "mouseover",
-      event => {
-
-        const target =
-          event.target.closest(
-            "button,a,input,select,.product"
-          );
-
-
-        if(target){
-
-          cursor.classList.add(
-            "active"
-          );
-
-
-          ring.classList.add(
-            "active"
-          );
-
-        }
-
-      }
+    p.style.setProperty(
+      '--y',
+      Math.sin(a)*d+'px'
     );
 
 
-    document.addEventListener(
-      "mouseout",
-      event => {
-
-        const target =
-          event.target.closest(
-            "button,a,input,select,.product"
-          );
-
-
-        if(target){
-
-          cursor.classList.remove(
-            "active"
-          );
-
-
-          ring.classList.remove(
-            "active"
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-
-  /* =========================================================
-     RIPPLE EFFECT
-  ========================================================= */
-
-  function createRipple(button,event){
-
-    if(!button){
-      return;
-    }
-
-
-    const old =
-      button.querySelector(
-        ".sv-ripple"
-      );
-
-
-    if(old){
-      old.remove();
-    }
-
-
-    const ripple =
-      document.createElement(
-        "span"
-      );
-
-
-    ripple.className =
-      "sv-ripple";
-
-
-    const size =
-      Math.max(
-        button.clientWidth,
-        button.clientHeight
-      );
-
-
-    const rect =
-      button.getBoundingClientRect();
-
-
-    const x =
-      event
-        ? event.clientX - rect.left
-        : button.clientWidth / 2;
-
-
-    const y =
-      event
-        ? event.clientY - rect.top
-        : button.clientHeight / 2;
-
-
-    ripple.style.width =
-      size + "px";
-
-
-    ripple.style.height =
-      size + "px";
-
-
-    ripple.style.left =
-      (x - size / 2) + "px";
-
-
-    ripple.style.top =
-      (y - size / 2) + "px";
-
-
-    button.appendChild(ripple);
+    document.body.appendChild(p);
 
 
     setTimeout(
-      () => ripple.remove(),
-      700
+      ()=>p.remove(),
+      850
     );
 
   }
 
+}
 
 
-  /* =========================================================
-     HEART PARTICLES
-  ========================================================= */
+/* FIND CART */
 
-  function createHeartParticles(button){
+function cartTarget(){
 
-    if(!button){
-      return;
-    }
+  return document.querySelector(
+    '.cart-icon,[href="cart.html"],.cart-button,.header-icon:last-child'
+  );
 
+}
 
-    const rect =
-      button.getBoundingClientRect();
 
+/* FLY PRODUCT TO CART */
 
-    for(let i = 0; i < 7; i++){
+function fly(button){
 
-      const particle =
-        document.createElement("span");
+  const card=
+    button.closest('.product,.card');
 
 
-      particle.className =
-        "sv-heart-particle";
+  const img=
+    card&&card.querySelector('img');
 
 
-      particle.textContent =
-        i % 2 === 0
-          ? "♥"
-          : "✦";
+  const target=
+    cartTarget();
 
 
-      const angle =
-        (Math.PI * 2 / 7) * i;
+  if(!target)return;
 
 
-      const distance =
-        35 + Math.random() * 30;
+  const a=
+    button.getBoundingClientRect();
 
 
-      particle.style.left =
-        (rect.left + rect.width / 2) +
-        "px";
+  const b=
+    target.getBoundingClientRect();
 
 
-      particle.style.top =
-        (rect.top + rect.height / 2) +
-        "px";
-
-
-      particle.style.setProperty(
-        "--x",
-        Math.cos(angle) * distance + "px"
-      );
-
-
-      particle.style.setProperty(
-        "--y",
-        Math.sin(angle) * distance + "px"
-      );
-
-
-      document.body.appendChild(
-        particle
-      );
-
-
-      setTimeout(
-        () => particle.remove(),
-        850
-      );
-
-    }
-
-  }
-
-
-
-  /* =========================================================
-     FIND CART ICON
-  ========================================================= */
-
-  function getCartIcon(){
-
-    return (
-      document.querySelector(".cart-icon") ||
-      document.querySelector(
-        "[href='cart.html']"
-      ) ||
-      document.querySelector(
-        ".header-icon:last-child"
-      )
-    );
-
-  }
-
-
-
-  /* =========================================================
-     FLY PRODUCT TO CART
-  ========================================================= */
-
-  function flyProductToCart(button,id){
-
-    const product =
-      Array.isArray(window.products)
-        ? window.products.find(
-            item => Number(item.id) === Number(id)
-          )
-        : null;
-
-
-    const cartIcon =
-      getCartIcon();
-
-
-    if(!product || !cartIcon){
-      return;
-    }
-
-
-    const start =
-      button.getBoundingClientRect();
-
-
-    const end =
-      cartIcon.getBoundingClientRect();
-
-
-    const flying =
-      document.createElement("img");
-
-
-    flying.className =
-      "sv-flying-product";
-
-
-    flying.src =
-      product.image;
-
-
-    flying.alt =
-      "";
-
-
-    flying.style.left =
-      (start.left + start.width / 2 - 36) +
-      "px";
-
-
-    flying.style.top =
-      (start.top + start.height / 2 - 36) +
-      "px";
-
-
-    document.body.appendChild(
-      flying
+  const f=
+    document.createElement(
+      img?'img':'div'
     );
 
 
-    const moveX =
-      end.left - start.left;
+  f.className='sv-fly';
 
 
-    const moveY =
-      end.top - start.top;
+  if(img){
 
-
-    const animation =
-      flying.animate(
-
-        [
-
-          {
-            transform:
-              "translate(0,0) scale(1) rotate(0deg)",
-            opacity:1,
-            borderRadius:"16px"
-          },
-
-          {
-            offset:.55,
-
-            transform:
-              `translate(${moveX * .55}px,${moveY * .35}px)
-               scale(.72)
-               rotate(8deg)`,
-
-            opacity:.9
-          },
-
-          {
-            transform:
-              `translate(${moveX}px,${moveY}px)
-               scale(.18)
-               rotate(18deg)`,
-
-            opacity:.2,
-            borderRadius:"50%"
-          }
-
-        ],
-
-        {
-
-          duration:850,
-
-          easing:
-            "cubic-bezier(.16,1,.3,1)",
-
-          fill:"forwards"
-
-        }
-
-      );
-
-
-    animation.onfinish =
-      () => {
-
-        flying.remove();
-
-
-        cartIcon.classList.remove(
-          "sv-cart-bump"
-        );
-
-
-        void cartIcon.offsetWidth;
-
-
-        cartIcon.classList.add(
-          "sv-cart-bump"
-        );
-
-
-        document
-          .querySelectorAll(
-            "[data-cart-count]"
-          )
-          .forEach(
-            badge => {
-
-              badge.classList.remove(
-                "sv-badge-bump"
-              );
-
-
-              void badge.offsetWidth;
-
-
-              badge.classList.add(
-                "sv-badge-bump"
-              );
-
-            }
-          );
-
-      };
-
-  }
-
-
-
-  /* =========================================================
-     INTERCEPT ADD TO CART
-  ========================================================= */
-
-  function setupCartAnimation(){
-
-    document.addEventListener(
-      "click",
-      event => {
-
-        const button =
-          event.target.closest(
-            ".add, .btn.dark"
-          );
-
-
-        if(!button){
-          return;
-        }
-
-
-        const onclick =
-          button.getAttribute(
-            "onclick"
-          ) || "";
-
-
-        const match =
-          onclick.match(
-            /addCart\\((\\d+)\\)/
-          );
-
-
-        if(!match){
-          return;
-        }
-
-
-        const id =
-          Number(match[1]);
-
-
-        button.classList.remove(
-          "sv-cart-success"
-        );
-
-
-        void button.offsetWidth;
-
-
-        button.classList.add(
-          "sv-cart-success"
-        );
-
-
-        createRipple(
-          button,
-          event
-        );
-
-
-        setTimeout(
-          () => {
-
-            flyProductToCart(
-              button,
-              id
-            );
-
-          },
-          80
-        );
-
-      },
-      true
-    );
-
-  }
-
-
-
-  /* =========================================================
-     INTERCEPT WISHLIST
-  ========================================================= */
-
-  function setupWishlistAnimation(){
-
-    document.addEventListener(
-      "click",
-      event => {
-
-        const button =
-          event.target.closest(
-            ".wish, button[onclick*='toggleWish']"
-          );
-
-
-        if(!button){
-          return;
-        }
-
-
-        button.classList.remove(
-          "sv-heart-pop"
-        );
-
-
-        void button.offsetWidth;
-
-
-        button.classList.add(
-          "sv-heart-pop"
-        );
-
-
-        createRipple(
-          button,
-          event
-        );
-
-
-        createHeartParticles(
-          button
-        );
-
-      },
-      true
-    );
-
-  }
-
-
-
-  /* =========================================================
-     SCROLL REVEAL
-  ========================================================= */
-
-  function setupScrollReveal(){
-
-    const selectors = [
-
-      ".section-head",
-      ".categories",
-      ".products",
-      ".features",
-      ".feature",
-      ".content-card",
-      ".two-col",
-      ".page-title"
-
-    ];
-
-
-    const elements =
-      document.querySelectorAll(
-        selectors.join(",")
-      );
-
-
-    if(!("IntersectionObserver" in window)){
-
-      elements.forEach(
-        element =>
-          element.classList.add(
-            "sv-visible"
-          )
-      );
-
-      return;
-
-    }
-
-
-    const observer =
-      new IntersectionObserver(
-
-        entries => {
-
-          entries.forEach(
-            entry => {
-
-              if(entry.isIntersecting){
-
-                entry.target.classList.add(
-                  "sv-visible"
-                );
-
-
-                observer.unobserve(
-                  entry.target
-                );
-
-              }
-
-            }
-          );
-
-        },
-
-        {
-          threshold:.08,
-          rootMargin:"0px 0px -30px 0px"
-        }
-
-      );
-
-
-    elements.forEach(
-      element => {
-
-        if(
-          element.classList.contains(
-            "products"
-          )
-        ){
-
-          return;
-
-        }
-
-
-        element.classList.add(
-          "sv-reveal"
-        );
-
-
-        observer.observe(
-          element
-        );
-
-      }
-    );
-
-  }
-
-
-
-  /* =========================================================
-     PRODUCT CARD STAGGER
-  ========================================================= */
-
-  function setupProductAnimations(){
-
-    const observer =
-      new MutationObserver(
-        mutations => {
-
-          mutations.forEach(
-            mutation => {
-
-              mutation.addedNodes.forEach(
-                node => {
-
-                  if(
-                    node.nodeType === 1 &&
-                    node.classList &&
-                    node.classList.contains(
-                      "product"
-                    )
-                  ){
-
-                    node.style.opacity = "0";
-
-
-                    node.animate(
-
-                      [
-
-                        {
-                          opacity:0,
-                          transform:
-                            "translateY(22px) scale(.98)"
-                        },
-
-                        {
-                          opacity:1,
-                          transform:
-                            "translateY(0) scale(1)"
-                        }
-
-                      ],
-
-                      {
-
-                        duration:550,
-
-                        easing:
-                          "cubic-bezier(.16,1,.3,1)",
-
-                        fill:"forwards"
-
-                      }
-
-                    );
-
-                  }
-
-                }
-              );
-
-            }
-          );
-
-        }
-      );
-
-
-    document
-      .querySelectorAll(
-        ".products"
-      )
-      .forEach(
-        container => {
-
-          observer.observe(
-            container,
-            {
-              childList:true
-            }
-          );
-
-        }
-      );
-
-
-    document
-      .querySelectorAll(
-        ".product"
-      )
-      .forEach(
-        (card,index) => {
-
-          card.animate(
-
-            [
-
-              {
-                opacity:0,
-                transform:
-                  "translateY(20px)"
-              },
-
-              {
-                opacity:1,
-                transform:
-                  "translateY(0)"
-              }
-
-            ],
-
-            {
-
-              duration:450,
-
-              delay:index * 45,
-
-              easing:
-                "cubic-bezier(.16,1,.3,1)",
-
-              fill:"forwards"
-
-            }
-
-          );
-
-        }
-      );
-
-  }
-
-
-
-  /* =========================================================
-     PREMIUM MAGNETIC BUTTON EFFECT
-  ========================================================= */
-
-  function setupMagneticButtons(){
-
-    if(!window.matchMedia("(pointer:fine)").matches){
-      return;
-    }
-
-
-    document.addEventListener(
-      "mousemove",
-      event => {
-
-        const button =
-          event.target.closest(
-            ".add,.btn,.header-icon"
-          );
-
-
-        if(!button){
-          return;
-        }
-
-
-        const rect =
-          button.getBoundingClientRect();
-
-
-        const x =
-          event.clientX -
-          rect.left -
-          rect.width / 2;
-
-
-        const y =
-          event.clientY -
-          rect.top -
-          rect.height / 2;
-
-
-        button.style.transform =
-          `translate(${x * .08}px,${y * .08}px)`;
-
-      }
-    );
-
-
-    document.addEventListener(
-      "mouseout",
-      event => {
-
-        const button =
-          event.target.closest(
-            ".add,.btn,.header-icon"
-          );
-
-
-        if(button){
-
-          button.style.transform = "";
-
-        }
-
-      }
-    );
-
-  }
-
-
-
-  /* =========================================================
-     INITIALIZE
-  ========================================================= */
-
-  function init(){
-
-    createCursor();
-
-    setupCartAnimation();
-
-    setupWishlistAnimation();
-
-    setupScrollReveal();
-
-    setupProductAnimations();
-
-    setupMagneticButtons();
-
-  }
-
-
-  if(
-    document.readyState ===
-    "loading"
-  ){
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      init
-    );
+    f.src=
+      img.currentSrc||img.src;
 
   }else{
 
-    init();
+    f.textContent='🛍️';
+
+    f.style.display='grid';
+
+    f.style.placeItems='center';
+
+    f.style.background='#fff';
 
   }
 
+
+  f.style.left=
+    a.left+a.width/2-35+'px';
+
+
+  f.style.top=
+    a.top+a.height/2-35+'px';
+
+
+  document.body.appendChild(f);
+
+
+  const an=f.animate(
+
+    [
+
+      {
+        transform:'translate(0,0) scale(1)',
+        opacity:1
+      },
+
+      {
+        offset:.55,
+
+        transform:`
+          translate(
+            ${(b.left-a.left)*.55}px,
+            ${(b.top-a.top)*.3}px
+          )
+          scale(.65)
+        `,
+
+        opacity:.9
+      },
+
+      {
+        transform:`
+          translate(
+            ${b.left-a.left}px,
+            ${b.top-a.top}px
+          )
+          scale(.12)
+        `,
+
+        opacity:.1
+      }
+
+    ],
+
+    {
+
+      duration:850,
+
+      easing:'cubic-bezier(.16,1,.3,1)',
+
+      fill:'forwards'
+
+    }
+
+  );
+
+
+  an.onfinish=()=>{
+
+    f.remove();
+
+    target.classList.remove(
+      'sv-cart-bump'
+    );
+
+
+    void target.offsetWidth;
+
+
+    target.classList.add(
+      'sv-cart-bump'
+    );
+
+  };
+
+}
+
+
+/* CLICK ANIMATIONS */
+
+function initClicks(){
+
+  document.addEventListener(
+
+    'click',
+
+    e=>{
+
+      /* WISHLIST */
+
+      const heart=e.target.closest(
+        '.wish,[data-wishlist],button[onclick*="Wish"],button[onclick*="wish"]'
+      );
+
+
+      if(heart){
+
+        heart.classList.remove(
+          'sv-heart-pop'
+        );
+
+
+        void heart.offsetWidth;
+
+
+        heart.classList.add(
+          'sv-heart-pop'
+        );
+
+
+        particles(heart);
+
+        ripple(heart,e);
+
+        return;
+      }
+
+
+      /* ADD TO CART */
+
+      const add=e.target.closest(
+        '.add,.add-to-cart,[data-add-cart],button[onclick*="addCart"]'
+      );
+
+
+      if(add){
+
+        add.classList.remove(
+          'sv-press'
+        );
+
+
+        void add.offsetWidth;
+
+
+        add.classList.add(
+          'sv-press'
+        );
+
+
+        ripple(add,e);
+
+
+        setTimeout(
+          ()=>fly(add),
+          60
+        );
+
+      }
+
+
+      /* NORMAL BUTTON */
+
+      const btn=e.target.closest(
+        'button,.btn,a.btn'
+      );
+
+
+      if(btn&&!heart&&!add){
+
+        btn.classList.remove(
+          'sv-press'
+        );
+
+
+        void btn.offsetWidth;
+
+
+        btn.classList.add(
+          'sv-press'
+        );
+
+      }
+
+    },
+
+    true
+
+  );
+
+}
+
+
+/* CUSTOM CURSOR */
+
+function initCursor(){
+
+  if(!matchMedia(
+    '(pointer:fine)'
+  ).matches)return;
+
+
+  const d=document.createElement('div');
+
+  const r=document.createElement('div');
+
+
+  d.className='sv-dot';
+
+  r.className='sv-ring';
+
+
+  document.body.append(d,r);
+
+
+  let x=0;
+  let y=0;
+
+  let rx=0;
+  let ry=0;
+
+
+  addEventListener(
+    'mousemove',
+
+    e=>{
+
+      x=e.clientX;
+
+      y=e.clientY;
+
+
+      d.style.left=x+'px';
+
+      d.style.top=y+'px';
+
+    }
+
+  );
+
+
+  (function loop(){
+
+    rx+=(x-rx)*.16;
+
+    ry+=(y-ry)*.16;
+
+
+    r.style.left=rx+'px';
+
+    r.style.top=ry+'px';
+
+
+    requestAnimationFrame(loop);
+
+  })();
+
+
+  document.addEventListener(
+    'mouseover',
+
+    e=>{
+
+      if(
+        e.target.closest(
+          'a,button,input,select,.product,.card'
+        )
+      ){
+
+        r.classList.add(
+          'sv-hover'
+        );
+
+      }
+
+    }
+
+  );
+
+
+  document.addEventListener(
+    'mouseout',
+
+    e=>{
+
+      if(
+        e.target.closest(
+          'a,button,input,select,.product,.card'
+        )
+      ){
+
+        r.classList.remove(
+          'sv-hover'
+        );
+
+      }
+
+    }
+
+  );
+
+}
+
+
+/* HERO EFFECT */
+
+function initHero(){
+
+  const h=
+    document.querySelector('.hero');
+
+
+  if(!h)return;
+
+
+  const pos=
+    getComputedStyle(h).position;
+
+
+  if(pos==='static'){
+
+    h.style.position='relative';
+
+  }
+
+
+  h.style.overflow='hidden';
+
+
+  const a=document.createElement('div');
+
+  const b=document.createElement('div');
+
+
+  a.className='sv-orb';
+
+  b.className='sv-orb b';
+
+
+  a.style.right='-70px';
+
+  a.style.top='-80px';
+
+
+  b.style.left='-50px';
+
+  b.style.bottom='-70px';
+
+
+  h.append(a,b);
+
+
+  if(window.Rellax){
+
+    try{
+
+      new Rellax(
+        '.sv-orb',
+        {
+          speed:-2,
+          center:true
+        }
+      );
+
+    }catch(_){}
+
+  }
+
+}
+
+
+/* INITIALIZE */
+
+function init(){
+
+  document.body.classList.add(
+    'sv-ready'
+  );
+
+
+  initLoader();
+
+  initReveal();
+
+  initClicks();
+
+  initCursor();
+
+  initHero();
+
+}
+
+
+if(document.readyState==='loading'){
+
+  document.addEventListener(
+    'DOMContentLoaded',
+    init
+  );
+
+}else{
+
+  init();
+
+}
 
 })();
