@@ -902,6 +902,11 @@ document.addEventListener(
     renderWishlist();
 
     renderProductDetail();
+     window.products = products;
+
+window.refreshShop = window.refreshShop;
+
+window.renderProducts = renderProducts;
 
   }
 );
