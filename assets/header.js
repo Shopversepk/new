@@ -1,5 +1,7 @@
 document.write(`
-<div class="announcement"><span>Exclusive online offers • Free delivery on selected orders</span><div><a href="about.html">For Business ↗</a><a href="contact.html">Support</a></div></div>
+<div class="announcement"><span>Exclusive online offers • Free delivery on selected orders</span><div><a href="about.html">For Business ↗</a>
+<a href="contact.html">Support</a>
+<a href="admin-login.html">Admin</a></div></div>
 <header class="header">
   <div class="nav">
     <a class="logo" href="index.html" aria-label="ShopVerse home">SHOP<span>VERSE</span></a>
