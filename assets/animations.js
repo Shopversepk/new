@@ -1,32 +1,127 @@
-/* ShopVerse Motion System - safe enhancement layer */
-(function(){
-'use strict';
-const css=`
-:root{--sv-accent:#6d5dfc;--sv-glow:rgba(109,93,252,.22)}
-html{scroll-behavior:smooth} body{overflow-x:hidden}
-/* page entrance */ body.sv-ready{animation:svPage .7s cubic-bezier(.16,1,.3,1)}@keyframes svPage{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-/* reveal */ .sv-reveal{opacity:0;transform:translateY(34px) scale(.985);transition:opacity .75s ease,transform .75s cubic-bezier(.16,1,.3,1)}.sv-reveal.sv-in{opacity:1;transform:none}
-/* cards */ .product,.card,.feature,.cat{will-change:transform;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s ease,filter .35s ease}.product:hover,.card:hover,.feature:hover,.cat:hover{transform:translateY(-9px);box-shadow:0 24px 55px rgba(10,15,30,.14)}.product{overflow:hidden}.product img{transition:transform .7s cubic-bezier(.16,1,.3,1),filter .5s ease}.product:hover img{transform:scale(1.08);filter:saturate(1.08)}
-/* image shine */ .product::after{content:'';position:absolute;inset:-60%;background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.32) 50%,transparent 58%);transform:translateX(-70%) rotate(8deg);transition:transform .9s ease;pointer-events:none}.product:hover::after{transform:translateX(70%) rotate(8deg)}
-/* buttons */ button,a.btn,.btn,.add{position:relative;isolation:isolate;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease,filter .25s ease}.sv-press{animation:svPress .48s cubic-bezier(.16,1,.3,1)}@keyframes svPress{0%{transform:scale(1)}40%{transform:scale(.94)}75%{transform:scale(1.06)}100%{transform:scale(1)}}.sv-ripple{position:absolute;border-radius:999px;background:rgba(255,255,255,.42);pointer-events:none;transform:scale(0);animation:svRipple .65s linear;z-index:-1}@keyframes svRipple{to{transform:scale(4);opacity:0}}
-/* heart */ .sv-heart-pop{animation:svHeart .62s cubic-bezier(.16,1,.3,1)}@keyframes svHeart{0%{transform:scale(1)}30%{transform:scale(1.5) rotate(-10deg)}58%{transform:scale(.88) rotate(7deg)}100%{transform:scale(1)}}.sv-particle{position:fixed;z-index:2147483647;pointer-events:none;font-size:15px;animation:svParticle .8s ease-out forwards}@keyframes svParticle{to{opacity:0;transform:translate(var(--x),var(--y)) scale(1.35) rotate(25deg)}}
-/* fly */ .sv-fly{position:fixed;width:70px;height:70px;object-fit:cover;border-radius:16px;z-index:2147483646;pointer-events:none;box-shadow:0 22px 50px rgba(0,0,0,.3)}.sv-cart-bump{animation:svCart .65s cubic-bezier(.16,1,.3,1)}@keyframes svCart{0%{transform:scale(1)}35%{transform:scale(1.3) rotate(-9deg)}70%{transform:scale(.93) rotate(5deg)}100%{transform:none}}
-/* premium cursor */ @media(pointer:fine){.sv-dot,.sv-ring{position:fixed;left:0;top:0;border-radius:50%;pointer-events:none;z-index:2147483647;transform:translate(-50%,-50%)}.sv-dot{width:8px;height:8px;background:#111}.sv-ring{width:34px;height:34px;border:1px solid rgba(0,0,0,.45);transition:width .2s,height .2s,border-color .2s}.sv-ring.sv-hover{width:54px;height:54px;border-color:var(--sv-accent)}}
-/* hero glow */ .sv-orb{position:absolute;width:260px;height:260px;border-radius:50%;filter:blur(8px);background:radial-gradient(circle,var(--sv-glow),transparent 68%);pointer-events:none;z-index:0;animation:svFloat 8s ease-in-out infinite}.sv-orb.b{width:180px;height:180px;animation-delay:-3s}@keyframes svFloat{50%{transform:translate(35px,-25px) scale(1.12)}}
-/* loading */ .sv-loading{position:fixed;inset:0;background:#fff;z-index:2147483647;display:grid;place-items:center;transition:opacity .45s ease,visibility .45s}.sv-loading.hide{opacity:0;visibility:hidden}.sv-loader{width:52px;height:52px;border:4px solid #eee;border-top-color:var(--sv-accent);border-radius:50%;animation:svSpin .8s linear infinite}@keyframes svSpin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-`;
-const s=document.createElement('style');s.textContent=css;document.head.appendChild(s);
-function qs(sel){return [...document.querySelectorAll(sel)]}
-function initLoader(){const l=document.createElement('div');l.className='sv-loading';l.innerHTML='<div class="sv-loader"></div>';document.body.appendChild(l);addEventListener('load',()=>setTimeout(()=>l.classList.add('hide'),250),{once:true})}
-function initReveal(){const els=qs('section,.section,.section-head,.products,.categories,.feature,.content-card,.page-title,.hero > *,main > *').filter(e=>!e.closest('.products')||e.classList.contains('products'));if(!('IntersectionObserver'in window)){els.forEach(e=>e.classList.add('sv-in'));return}const o=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('sv-in');o.unobserve(x.target)}}),{threshold:.08,rootMargin:'0px 0px -40px'});els.forEach(e=>{e.classList.add('sv-reveal');o.observe(e)})}
-function ripple(el,e){const r=el.getBoundingClientRect(),d=Math.max(r.width,r.height),x=e.clientX-r.left,y=e.clientY-r.top,sp=document.createElement('span');sp.className='sv-ripple';sp.style.cssText+=`width:${d}px;height:${d}px;left:${x-d/2}px;top:${y-d/2}px`;el.appendChild(sp);setTimeout(()=>sp.remove(),700)}
-function particles(el){const r=el.getBoundingClientRect();for(let i=0;i<7;i++){const p=document.createElement('i');p.className='sv-particle';p.textContent=i%2?'✦':'♥';const a=Math.PI*2*i/7,d=35+Math.random()*35;p.style.left=r.left+r.width/2+'px';p.style.top=r.top+r.height/2+'px';p.style.setProperty('--x',Math.cos(a)*d+'px');p.style.setProperty('--y',Math.sin(a)*d+'px');document.body.appendChild(p);setTimeout(()=>p.remove(),850)}}
-function cartTarget(){return document.querySelector('.cart-icon,[href="cart.html"],.cart-button,.header-icon:last-child')}
-function fly(button){const card=button.closest('.product,.card'),img=card&&card.querySelector('img'),target=cartTarget();if(!target)return;const a=button.getBoundingClientRect(),b=target.getBoundingClientRect();const f=document.createElement(img?'img':'div');f.className='sv-fly';if(img)f.src=img.currentSrc||img.src;else{f.textContent='🛍️';f.style.display='grid';f.style.placeItems='center';f.style.background='#fff'}f.style.left=a.left+a.width/2-35+'px';f.style.top=a.top+a.height/2-35+'px';document.body.appendChild(f);const an=f.animate([{transform:'translate(0,0) scale(1)',opacity:1},{offset:.55,transform:`translate(${(b.left-a.left)*.55}px,${(b.top-a.top)*.3}px) scale(.65)`,opacity:.9},{transform:`translate(${b.left-a.left}px,${b.top-a.top}px) scale(.12)`,opacity:.1}],{duration:850,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'});an.onfinish=()=>{f.remove();target.classList.remove('sv-cart-bump');void target.offsetWidth;target.classList.add('sv-cart-bump')}}
-function initClicks(){document.addEventListener('click',e=>{const heart=e.target.closest('.wish,[data-wishlist],button[onclick*="Wish"],button[onclick*="wish"]');if(heart){heart.classList.remove('sv-heart-pop');void heart.offsetWidth;heart.classList.add('sv-heart-pop');particles(heart);ripple(heart,e);return}const add=e.target.closest('.add,.add-to-cart,[data-add-cart],button[onclick*="addCart"]');if(add){add.classList.remove('sv-press');void add.offsetWidth;add.classList.add('sv-press');ripple(add,e);setTimeout(()=>fly(add),60)}const btn=e.target.closest('button,.btn,a.btn');if(btn&&!heart&&!add){btn.classList.remove('sv-press');void btn.offsetWidth;btn.classList.add('sv-press')}} ,true)}
-function initCursor(){if(!matchMedia('(pointer:fine)').matches)return;const d=document.createElement('div'),r=document.createElement('div');d.className='sv-dot';r.className='sv-ring';document.body.append(d,r);let x=0,y=0,rx=0,ry=0;addEventListener('mousemove',e=>{x=e.clientX;y=e.clientY;d.style.left=x+'px';d.style.top=y+'px'});(function loop(){rx+=(x-rx)*.16;ry+=(y-ry)*.16;r.style.left=rx+'px';r.style.top=ry+'px';requestAnimationFrame(loop)})();document.addEventListener('mouseover',e=>{if(e.target.closest('a,button,input,select,.product,.card'))r.classList.add('sv-hover')});document.addEventListener('mouseout',e=>{if(e.target.closest('a,button,input,select,.product,.card'))r.classList.remove('sv-hover')})}
-function initHero(){const h=document.querySelector('.hero');if(!h)return;const pos=getComputedStyle(h).position;if(pos==='static')h.style.position='relative';h.style.overflow='hidden';const a=document.createElement('div'),b=document.createElement('div');a.className='sv-orb';b.className='sv-orb b';a.style.right='-70px';a.style.top='-80px';b.style.left='-50px';b.style.bottom='-70px';h.append(a,b);if(window.Rellax){try{new Rellax('.sv-orb',{speed:-2,center:true})}catch(_){}}}
-function init(){document.body.classList.add('sv-ready');initLoader();initReveal();initClicks();initCursor();initHero()}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+/* ShopVerse Professional Motion Layer */
+(function () {
+  "use strict";
+
+  const style = document.createElement("style");
+  style.textContent = `
+    :root{--sv-ink:#111;--sv-soft:#f4f4f6}
+    body{overflow-x:hidden}
+    .sv-intro{position:fixed;inset:0;z-index:2147483647;background:#fff;display:grid;place-items:center;transition:opacity .7s cubic-bezier(.16,1,.3,1),visibility .7s}
+    .sv-intro.hide{opacity:0;visibility:hidden}
+    .sv-intro-mark{text-align:center;color:#111}
+    .sv-intro-word{font:900 clamp(42px,8vw,92px)/1 Inter,Arial,sans-serif;letter-spacing:-.06em;display:inline-block;overflow:hidden}
+    .sv-intro-word span{display:inline-block;transform:translateY(120%);opacity:0;animation:svLetter .65s cubic-bezier(.16,1,.3,1) forwards}
+    .sv-intro-word em{font-style:normal;color:#8a8a8a}
+    .sv-intro-line{height:2px;width:0;background:#111;margin:18px auto 0;animation:svLine .9s .55s cubic-bezier(.16,1,.3,1) forwards}
+    .sv-intro-small{font:700 11px/1 Arial,sans-serif;letter-spacing:.28em;color:#888;margin-top:15px;opacity:0;animation:svFade .55s .85s forwards}
+    @keyframes svLetter{to{transform:translateY(0);opacity:1}}
+    @keyframes svLine{to{width:110px}}
+    @keyframes svFade{to{opacity:1}}
+    .sv-reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1)}
+    .sv-reveal.sv-in{opacity:1;transform:none}
+    .product,.cat,.feature,.content-card{will-change:transform;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s ease}
+    .product:hover,.cat:hover,.feature:hover,.content-card:hover{transform:translateY(-7px);box-shadow:0 22px 50px rgba(12,15,24,.13)}
+    .product img,.cat img{transition:transform .8s cubic-bezier(.16,1,.3,1),filter .45s ease}
+    .product:hover img,.cat:hover img{transform:scale(1.07);filter:saturate(1.08)}
+    .sv-heart-pop{animation:svHeart .65s cubic-bezier(.16,1,.3,1)}
+    @keyframes svHeart{0%{transform:scale(1)}35%{transform:scale(1.38) rotate(-8deg)}65%{transform:scale(.9) rotate(5deg)}100%{transform:scale(1)}}
+    .sv-particle{position:fixed;z-index:2147483646;pointer-events:none;font-size:14px;animation:svParticle .85s ease-out forwards}
+    @keyframes svParticle{to{opacity:0;transform:translate(var(--x),var(--y)) scale(1.4) rotate(25deg)}}
+    @media(pointer:fine){
+      .sv-dot{position:fixed;width:7px;height:7px;background:#111;border-radius:50%;pointer-events:none;z-index:2147483646;transform:translate(-50%,-50%)}
+      .sv-ring{position:fixed;width:30px;height:30px;border:1px solid rgba(0,0,0,.4);border-radius:50%;pointer-events:none;z-index:2147483645;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s}
+      .sv-ring.hover{width:48px;height:48px;border-color:#111}
+    }
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}.sv-intro{display:none!important}}
+  `;
+  document.head.appendChild(style);
+
+  function makeIntro() {
+    const intro = document.createElement("div");
+    intro.className = "sv-intro";
+    const brand = "ShopVerse";
+    const letters = [...brand].map((c, i) =>
+      `<span style="animation-delay:${0.06 + i * 0.055}s"${c === "V" ? ' class="sv-v"' : ""}>${c}</span>`
+    ).join("");
+    intro.innerHTML = `<div class="sv-intro-mark">
+      <div class="sv-intro-word">${letters}</div>
+      <div class="sv-intro-line"></div>
+      <div class="sv-intro-small">PREMIUM SHOPPING</div>
+    </div>`;
+    document.body.appendChild(intro);
+    const finish = () => setTimeout(() => intro.classList.add("hide"), 1500);
+    if (document.readyState === "complete") finish();
+    else window.addEventListener("load", finish, { once: true });
+    setTimeout(() => intro.remove(), 2600);
+  }
+
+  function initReveal() {
+    const els = [...document.querySelectorAll("section,.section,.section-head,.categories,.products,.page-title,.content-card,main > *")];
+    if (!("IntersectionObserver" in window)) return els.forEach(el => el.classList.add("sv-in"));
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("sv-in");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .08, rootMargin: "0px 0px -45px" });
+    els.forEach(el => { el.classList.add("sv-reveal"); observer.observe(el); });
+  }
+
+  function particles(el) {
+    const r = el.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) {
+      const p = document.createElement("i");
+      p.className = "sv-particle";
+      p.textContent = i % 2 ? "✦" : "♥";
+      const angle = Math.PI * 2 * i / 6, dist = 30 + Math.random() * 34;
+      p.style.left = r.left + r.width / 2 + "px";
+      p.style.top = r.top + r.height / 2 + "px";
+      p.style.setProperty("--x", Math.cos(angle) * dist + "px");
+      p.style.setProperty("--y", Math.sin(angle) * dist + "px");
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 900);
+    }
+  }
+
+  function initHeartMotion() {
+    document.addEventListener("click", e => {
+      const heart = e.target.closest(".wish,[data-wishlist]");
+      if (!heart) return;
+      heart.classList.remove("sv-heart-pop");
+      void heart.offsetWidth;
+      heart.classList.add("sv-heart-pop");
+      particles(heart);
+    }, true);
+  }
+
+  function initCursor() {
+    if (!window.matchMedia || !matchMedia("(pointer:fine)").matches) return;
+    const dot = document.createElement("div"), ring = document.createElement("div");
+    dot.className = "sv-dot"; ring.className = "sv-ring";
+    document.body.append(dot, ring);
+    let x = 0, y = 0, rx = 0, ry = 0;
+    addEventListener("mousemove", e => { x = e.clientX; y = e.clientY; dot.style.left = x + "px"; dot.style.top = y + "px"; });
+    (function loop() {
+      rx += (x - rx) * .14; ry += (y - ry) * .14;
+      ring.style.left = rx + "px"; ring.style.top = ry + "px";
+      requestAnimationFrame(loop);
+    })();
+    document.addEventListener("mouseover", e => {
+      if (e.target.closest("a,button,input,select,.product,.cat,.card")) ring.classList.add("hover");
+    });
+    document.addEventListener("mouseout", e => {
+      if (e.target.closest("a,button,input,select,.product,.cat,.card")) ring.classList.remove("hover");
+    });
+  }
+
+  function init() {
+    makeIntro();
+    initReveal();
+    initHeartMotion();
+    initCursor();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();
