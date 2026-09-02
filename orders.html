@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Track Order — ShopVerse</title><link rel="stylesheet" href="assets/style.css"></head><body>
+<script src="assets/header.js"></script>
+<main class="container"><div class="page-title"><h1>Track Your Order</h1><p class="muted">Enter your ShopVerse order ID to see the latest delivery status.</p></div>
+<div class="content-card" style="max-width:850px;margin:auto"><div style="display:flex;gap:10px;flex-wrap:wrap"><input id="orderId" placeholder="Paste your Order ID" style="flex:1;min-width:220px"><button class="btn dark" id="trackBtn">Track Order</button></div><div id="trackResult" style="margin-top:24px"></div></div></main>
+<script type="module">
+import {db} from "./assets/firebase.js";
+import {doc,getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const steps=["Order Placed","Packing","On The Way","Arrived","Delivered"];
+const id=document.getElementById("orderId"),result=document.getElementById("trackResult");
+id.value=localStorage.getItem("sv_last_order")||"";
+async function track(){
+ const value=id.value.trim(); if(!value){result.innerHTML="<p class='muted'>Please enter your Order ID.</p>";return}
+ result.innerHTML="<p class='muted'>Checking your order...</p>";
+ try{const snap=await getDoc(doc(db,"orders",value)); if(!snap.exists()){result.innerHTML="<p>Order not found.</p>";return}
+ const o=snap.data(), current=o.status||"Order Placed", index=steps.indexOf(current);
+ result.innerHTML=`<h2>Order #${value.slice(0,8).toUpperCase()}</h2><p><b>Current status:</b> ${current}</p><div class="tracking">${steps.map((s,i)=>`<div class="track-step ${i<=index?"done":""} ${i===index?"current":""}"><span>${i<index?"✓":i+1}</span><b>${s}</b></div>`).join("")}</div>${current==="Cancelled"?"<p style='margin-top:18px'>This order has been cancelled.</p>":""}`;
+ }catch(e){console.error(e);result.innerHTML="<p>Could not load this order. Please try again later.</p>"}
+}
+document.getElementById("trackBtn").onclick=track;if(id.value)track();
+</script><script src="assets/footer.js"></script><script src="assets/rellax.min.js"></script><script src="assets/animations.js"></script></body></html>

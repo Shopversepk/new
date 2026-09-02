@@ -43,6 +43,10 @@
         📦 Products
       </a>
 
+      <a href="#orders">
+        🧾 Orders
+      </a>
+
       <a
         href="index.html"
         target="_blank"
@@ -173,6 +177,9 @@
 
       </div>
 
+      <div class="stat-card"><div class="stat-icon">🧾</div><div><span>Total Orders</span><h2 id="totalOrders">0</h2></div></div>
+      <div class="stat-card"><div class="stat-icon">⏳</div><div><span>Active Orders</span><h2 id="activeOrders">0</h2></div></div>
+      <div class="stat-card"><div class="stat-icon">💵</div><div><span>Order Revenue</span><h2 id="orderRevenue">$0</h2></div></div>
     </section>
 
 
@@ -471,6 +478,19 @@
 
       </div>
 
+    </section>
+
+
+    <!-- ORDERS -->
+    <section id="orders" class="admin-section">
+      <div class="section-heading products-heading">
+        <div><span class="small-title">ORDER MANAGEMENT</span><h2>Customer Orders</h2><p class="muted">Change status and customers will see the latest delivery progress.</p></div>
+        <select id="orderStatusFilter" class="search-input">
+          <option value="">All statuses</option>
+          <option>Order Placed</option><option>Packing</option><option>On The Way</option><option>Arrived</option><option>Delivered</option><option>Cancelled</option>
+        </select>
+      </div>
+      <div id="adminOrders" class="admin-orders"><div class="loading">Loading orders...</div></div>
     </section>
 
 
