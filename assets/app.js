@@ -52,7 +52,7 @@ const IMG = {
 };
 
 
-const products = [
+var products = [
 
 /* =========================================================
    FASHION - 17 PRODUCTS
