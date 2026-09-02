@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Admin Dashboard | ShopVerse</title>
+
+  <link
+    rel="stylesheet"
+    href="assets/admin.css"
+  >
+</head>
+
+<body class="admin-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <a href="index.html" class="sidebar-logo">
+      SHOPVERSE
+    </a>
+
+    <div class="admin-label">
+      ADMIN PANEL
+    </div>
+
+    <nav class="admin-nav">
+
+      <a href="#dashboard" class="active">
+        📊 Dashboard
+      </a>
+
+      <a href="#add-product">
+        ➕ Add Product
+      </a>
+
+      <a href="#products">
+        📦 Products
+      </a>
+
+      <a
+        href="index.html"
+        target="_blank"
+      >
+        🌐 View Website
+      </a>
+
+    </nav>
+
+    <button
+      id="logoutBtn"
+      class="logout-btn"
+    >
+      🚪 Logout
+    </button>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+
+    <!-- HEADER -->
+    <header class="admin-header">
+
+      <div>
+
+        <div class="small-title">
+          SHOPVERSE MANAGEMENT
+        </div>
+
+        <h1>
+          Dashboard
+        </h1>
+
+      </div>
+
+
+      <div class="admin-user">
+
+        <div class="user-circle">
+          S
+        </div>
+
+        <div>
+
+          <b id="adminEmail">
+            Admin
+          </b>
+
+          <small>
+            Store Administrator
+          </small>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- STATS -->
+    <section
+      id="dashboard"
+      class="stats-grid"
+    >
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          📦
+        </div>
+
+        <div>
+
+          <span>
+            Total Products
+          </span>
+
+          <h2 id="totalProducts">
+            0
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          💰
+        </div>
+
+        <div>
+
+          <span>
+            Total Store Value
+          </span>
+
+          <h2 id="totalValue">
+            $0
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          📂
+        </div>
+
+        <div>
+
+          <span>
+            Categories
+          </span>
+
+          <h2 id="totalCategories">
+            0
+          </h2>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ADD PRODUCT -->
+    <section
+      id="add-product"
+      class="admin-section"
+    >
+
+      <div class="section-heading">
+
+        <div>
+
+          <span class="small-title">
+            PRODUCT MANAGEMENT
+          </span>
+
+          <h2 id="formTitle">
+            Add New Product
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-card">
+
+        <form id="productForm">
+
+
+          <!-- EDIT ID -->
+          <input
+            type="hidden"
+            id="editProductId"
+          >
+
+
+          <div class="form-grid">
+
+
+            <!-- PRODUCT NAME -->
+            <div class="form-group">
+
+              <label>
+                Product Name *
+              </label>
+
+              <input
+                type="text"
+                id="productName"
+                placeholder="Example: Premium Sneakers"
+                required
+              >
+
+            </div>
+
+
+            <!-- CATEGORY -->
+            <div class="form-group">
+
+              <label>
+                Category *
+              </label>
+
+              <select
+                id="productCategory"
+                required
+              >
+
+                <option value="">
+                  Select Category
+                </option>
+
+                <option value="Fashion">
+                  Fashion
+                </option>
+
+                <option value="Electronics">
+                  Electronics
+                </option>
+
+                <option value="Beauty">
+                  Beauty
+                </option>
+
+                <option value="Home">
+                  Home
+                </option>
+
+                <option value="Sports">
+                  Sports
+                </option>
+
+                <option value="Accessories">
+                  Accessories
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- PRICE -->
+            <div class="form-group">
+
+              <label>
+                Price ($) *
+              </label>
+
+              <input
+                type="number"
+                id="productPrice"
+                placeholder="99"
+                min="0"
+                step="0.01"
+                required
+              >
+
+            </div>
+
+
+          </div>
+
+
+          <!-- IMAGE SECTION -->
+          <div class="form-group full-width">
+
+            <label>
+              Product Image *
+            </label>
+
+
+            <!-- IMAGE TABS -->
+            <div class="image-upload-tabs">
+
+              <button
+                type="button"
+                class="image-tab active"
+                id="urlTabBtn"
+              >
+                🔗 Image URL
+              </button>
+
+
+              <button
+                type="button"
+                class="image-tab"
+                id="uploadTabBtn"
+              >
+                🖼️ Upload from Gallery
+              </button>
+
+            </div>
+
+
+            <!-- URL IMAGE -->
+            <div id="urlImageBox">
+
+              <input
+                type="url"
+                id="productImage"
+                placeholder="Paste image URL here..."
+              >
+
+            </div>
+
+
+            <!-- FILE / GALLERY IMAGE -->
+            <div
+              id="uploadImageBox"
+              style="display:none"
+            >
+
+              <input
+                type="file"
+                id="productImageFile"
+                accept="image/*"
+              >
+
+              <small class="upload-help">
+                Select an image from your computer or mobile gallery.
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <!-- IMAGE PREVIEW -->
+          <div
+            id="imagePreviewBox"
+            class="image-preview-box"
+          >
+
+            <span>
+              Image preview will appear here
+            </span>
+
+          </div>
+
+
+          <!-- DESCRIPTION -->
+          <div class="form-group full-width">
+
+            <label>
+              Product Description *
+            </label>
+
+            <textarea
+              id="productDescription"
+              placeholder="Write complete product description..."
+              required
+            ></textarea>
+
+          </div>
+
+
+          <!-- BUTTONS -->
+          <div class="form-actions">
+
+            <button
+              type="submit"
+              id="saveProductBtn"
+              class="admin-primary-btn"
+            >
+              + Add Product
+            </button>
+
+
+            <button
+              type="button"
+              id="cancelEditBtn"
+              class="admin-secondary-btn"
+              style="display:none"
+            >
+              Cancel Edit
+            </button>
+
+          </div>
+
+
+          <!-- MESSAGE -->
+          <div
+            id="formMessage"
+            class="form-message"
+          ></div>
+
+        </form>
+
+      </div>
+
+    </section>
+
+
+    <!-- PRODUCTS LIST -->
+    <section
+      id="products"
+      class="admin-section"
+    >
+
+      <div class="section-heading products-heading">
+
+        <div>
+
+          <span class="small-title">
+            DATABASE
+          </span>
+
+          <h2>
+            All Products
+          </h2>
+
+        </div>
+
+
+        <input
+          type="text"
+          id="productSearch"
+          placeholder="🔍 Search products..."
+          class="search-input"
+        >
+
+      </div>
+
+
+      <!-- PRODUCTS -->
+      <div
+        id="adminProducts"
+        class="admin-products-grid"
+      >
+
+        <div class="loading">
+          Loading products...
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- ADMIN JS -->
+  <script
+    type="module"
+    src="assets/admin.js"
+  ></script>
+
+</body>
+</html>
